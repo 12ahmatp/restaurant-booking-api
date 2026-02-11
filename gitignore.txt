@@ -141,3 +141,7 @@ cython_debug/
 *.temp
 tmp/
 temp/
+
+# Seed data (contains default credentials)
+seed_data.sql
+*_seed.sql
