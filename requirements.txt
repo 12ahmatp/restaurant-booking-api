@@ -1,0 +1,45 @@
+
+# ============================================
+# Restaurant Booking API - Python Dependencies
+# ============================================
+# Install with: pip install -r requirements.txt
+# ============================================
+
+# -------------------------------------------
+# Core Framework
+# -------------------------------------------
+fastapi>=0.109.0              # Web framework for building APIs
+uvicorn[standard]>=0.27.0     # ASGI server with uvloop, httptools, and websockets for production
+python-multipart>=0.0.6       # Required by FastAPI for form data and file upload parsing
+pydantic[email]>=2.5.0        # Data validation, serialization, and email validator support
+
+# -------------------------------------------
+# Authentication & Security
+# -------------------------------------------
+python-jose[cryptography]>=3.3.0   # JWT token creation and verification
+passlib[bcrypt]>=1.7.4             # Password hashing with bcrypt algorithm
+
+# -------------------------------------------
+# Database
+# -------------------------------------------
+sqlalchemy>=2.0.25            # ORM and database toolkit (async-compatible)
+psycopg2-binary>=2.9.9       # PostgreSQL adapter (binary build, no pg_config needed)
+alembic>=1.13.0               # Database schema migration tool for SQLAlchemy
+
+# -------------------------------------------
+# SMS Notification Service
+# -------------------------------------------
+httpx>=0.26.0                 # Async HTTP client for calling smsnotif.id API
+
+# -------------------------------------------
+# Azure Integration (Optional - Production)
+# -------------------------------------------
+# These are only needed if you use Azure Key Vault for secrets management.
+# Comment them out for local development to keep the install lightweight.
+azure-identity>=1.15.0        # Azure authentication (Managed Identity / Service Principal)
+azure-keyvault-secrets>=4.7.0 # Azure Key Vault client for fetching secrets at runtime
+
+# -------------------------------------------
+# Utilities
+# -------------------------------------------
+python-dotenv>=1.0.0          # Load environment variables from .env files

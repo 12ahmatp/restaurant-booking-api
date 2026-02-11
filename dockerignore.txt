@@ -1,0 +1,139 @@
+
+# ============================================
+# .dockerignore - Restaurant Booking API
+# ============================================
+# This file prevents unnecessary files from being
+# sent to the Docker daemon during builds, reducing
+# build time and image size.
+# ============================================
+
+# -------------------------------------------
+# Version Control
+# -------------------------------------------
+.git
+.gitignore
+.gitattributes
+
+# -------------------------------------------
+# Environment and Secrets
+# -------------------------------------------
+.env
+.env.*
+*.pem
+*.key
+*.crt
+secrets.json
+secrets.yaml
+
+# -------------------------------------------
+# Python Bytecode and Cache
+# -------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# -------------------------------------------
+# Virtual Environments
+# -------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+.python-version
+
+# -------------------------------------------
+# IDE and Editor Files
+# -------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# -------------------------------------------
+# Docker Files (avoid recursive builds)
+# -------------------------------------------
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+.docker/
+.dockerignore
+
+# -------------------------------------------
+# Documentation and Markdown
+# -------------------------------------------
+docs/
+*.md
+# Keep important files if needed by uncommenting:
+# !README.md
+# !CHANGELOG.md
+
+# -------------------------------------------
+# Testing and Coverage
+# -------------------------------------------
+tests/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+.hypothesis/
+.tox/
+.nox/
+test-results/
+
+# -------------------------------------------
+# OS Generated Files
+# -------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -------------------------------------------
+# Log Files
+# -------------------------------------------
+*.log
+logs/
+log/
+
+# -------------------------------------------
+# Database Files
+# -------------------------------------------
+*.db
+*.sqlite3
+*.sqlite
+*.sql.bak
+
+# -------------------------------------------
+# Azure Specific
+# -------------------------------------------
+.azure/
+azure.env
+*.publishsettings
+local.settings.json
+
+# -------------------------------------------
+# Build and Distribution Artifacts
+# -------------------------------------------
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+
+# -------------------------------------------
+# Misc
+# -------------------------------------------
+*.bak
+*.tmp
+*.temp
+.cache/
+.mypy_cache/
+.ruff_cache/

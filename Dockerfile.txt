@@ -1,0 +1,93 @@
+
+# ============================================
+# Production Dockerfile - Restaurant Booking API
+# ============================================
+
+# Stage 1: Use Python 3.11 slim as the base image
+# Slim variant reduces image size significantly compared to the full image
+FROM python:3.11-slim AS base
+
+# Prevent Python from writing .pyc bytecode files to disk
+# This keeps the container filesystem clean and avoids stale cache issues
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Ensure Python output (stdout/stderr) is sent straight to the terminal
+# without buffering, so logs appear in real-time in Docker logs
+ENV PYTHONUNBUFFERED=1
+
+# Set the working directory inside the container
+# All subsequent commands will run relative to this path
+WORKDIR /app
+
+# ============================================
+# Install system dependencies
+# ============================================
+# Install curl for the HEALTHCHECK instruction and clean up
+# apt cache in the same layer to keep the image size small
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# ============================================
+# Install Python dependencies (layer caching)
+# ============================================
+# Copy only requirements.txt first to leverage Docker layer caching.
+# Dependencies are re-installed only when requirements.txt changes,
+# not on every code change — this speeds up rebuilds significantly.
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# ============================================
+# Create a non-root user for security
+# ============================================
+# Running as root inside a container is a security risk.
+# We create a dedicated user 'appuser' with no home directory
+# and no login shell to minimize the attack surface.
+RUN groupadd --system appuser \
+    && useradd --system --gid appuser --no-create-home --shell /usr/sbin/nologin appuser
+
+# ============================================
+# Copy application source code
+# ============================================
+# Copy the rest of the application code into the container.
+# This layer is rebuilt whenever any source file changes,
+# but the dependency layer above remains cached.
+COPY . .
+
+# Change ownership of the app directory to the non-root user
+# so the application can read its own files at runtime
+RUN chown -R appuser:appuser /app
+
+# ============================================
+# Switch to the non-root user
+# ============================================
+# All subsequent commands and the final CMD run as 'appuser'
+USER appuser
+
+# ============================================
+# Expose the application port
+# ============================================
+# Inform Docker that the container listens on port 8000 at runtime.
+# This is documentation only — you still need -p 8000:8000 when running.
+EXPOSE 8000
+
+# ============================================
+# Health check configuration
+# ============================================
+# Docker will call GET /health every 30 seconds to verify the
+# container is alive and responsive. If 3 consecutive checks fail
+# (timeout 10s each, retries 3), Docker marks the container as unhealthy.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl --fail http://localhost:8000/health || exit 1
+
+# ============================================
+# Start the application
+# ============================================
+# Run uvicorn with 4 worker processes for production concurrency.
+# Binding to 0.0.0.0 allows traffic from outside the container.
+# Workers are based on the recommended formula: (2 * CPU cores) + 1
+# Adjust the worker count based on your Azure container's vCPU allocation.
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
